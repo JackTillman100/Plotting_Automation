@@ -7,3 +7,5 @@
 #Initial Creation: 02/06/2024
 
 #This is a test
+
+### First step is to make a for loop to iterate over all the antennas to pick the best one
