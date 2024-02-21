@@ -112,7 +112,7 @@ for gen in range(0, g.num_gens):
     fitness_scores=[]
     
     ### First we need to open the csv file that contains the values of the fitness scores.
-    with open(g.source + '/' + str(gen) + "_fitnessScores.csv") as f:
+    with open(g.source  + '/' + "Generation_" + str(gen) + '/' + str(gen) + "_generationDNA.csv") as f:
         
         ### We then itereate over every row in the fitnessScores.csv file
         for row in f:
@@ -126,7 +126,7 @@ for gen in range(0, g.num_gens):
                 fitness_scores.append(float(row[0]))
     
     ### Opens generation data
-    with open(g.source + '/' + str(gen) + "_generationDNA.csv") as f:
+    with open(g.source  + '/' + "Generation_" + str(gen) + '/' + str(gen) + "_generationDNA.csv") as f:
         lines=f.readlines()
         
         ### Splits data into readable form
@@ -314,5 +314,3 @@ plt.legend()
 plt.xlabel('generation')
 plt.ylabel('unique # of individuals')
 plt.savefig(use_this_one)
-
-
