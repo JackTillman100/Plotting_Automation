@@ -85,19 +85,21 @@ def matching_DNA(gen1, indiv1, gen2, indiv2):
     print('####')
     print(in_gen_index_1)
     print('####')
-    print(len(DNA1))
 
     print(gen2)
     print('####')
     print(in_gen_index_2)
     print('#####')
-    print(len(DNA2))
 
     ##Analyzing index error (line 81)
 
     DNA1 = all_DNA[gen1][in_gen_index_1]
     DNA2 = all_DNA[gen2][in_gen_index_2]
     
+    print(DNA1)
+    print('######')
+    print(DNA2)
+
     ### TESTING
     #if DNA1==DNA2:
     #    print(indiv1, gen1)
