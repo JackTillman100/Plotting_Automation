@@ -92,6 +92,7 @@ def matching_DNA(gen1, indiv1, gen2, indiv2):
     print('#####')
 
     ##Analyzing index error (line 81)
+    print(all_DNA)
 
     DNA1 = all_DNA[gen1][in_gen_index_1]
     DNA2 = all_DNA[gen2][in_gen_index_2]
