@@ -26,3 +26,4 @@
 ##Print the fitness scores and the individual they're associated with in the following format:
 ##      Individual: Fitness Score
 ##      Ex. 09_15: 5.36201
+
