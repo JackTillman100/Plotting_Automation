@@ -78,6 +78,23 @@ def matching_DNA(gen1, indiv1, gen2, indiv2):
     in_gen_index_2 = int(indiv2%g.num_individuals)
     
     ### Stores DNA for each individual into variables
+
+    ##Analyzing index error (line 81)
+
+    print(gen1)
+    print('####')
+    print(in_gen_index_1)
+    print('####')
+    print(len(DNA1))
+
+    print(gen2)
+    print('####')
+    print(in_gen_index_2)
+    print('#####')
+    print(len(DNA2))
+
+    ##Analyzing index error (line 81)
+
     DNA1 = all_DNA[gen1][in_gen_index_1]
     DNA2 = all_DNA[gen2][in_gen_index_2]
     
