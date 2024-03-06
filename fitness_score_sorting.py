@@ -85,3 +85,20 @@ print(organized_fitness_scores)
 
 
 
+
+for gen in range(0, g.num_gens-1):
+    all_fitness_scores.extend(organized_fitness_scores[gen])
+    
+    
+all_fitness_scores.sort(reverse=True)
+top_fitness_scores = []
+for x in range(0,5):
+    
+    top_fitness_scores.append(all_fitness_scores[x]) 
+    
+print('Test:')
+print('=================================================================')
+print()
+print(all_fitness_scores)
+print()
+print(top_fitness_scores)
