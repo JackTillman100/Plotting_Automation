@@ -513,7 +513,7 @@ ax1.grid(linestyle='--', linewidth=1.4)
 ax1.legend(ncol=6, loc=('upper center'), prop={'size': 25} )
 #plt.suptitle("Angular reconstrucion of simulated events with AraSim", fontsize=22)
 #fig.tight_layout(rect=[0, 0.09, 1, 0.95])
-plt.savefig("NuAnglesnew.png", dpi=100, bbox_inches = 'tight')
+plt.savefig("test_plots/NuAnglesnew.png", dpi=100, bbox_inches = 'tight')
 plt.clf()
 
 #Plotting nnu_theta:
@@ -601,7 +601,7 @@ ax1.grid(linestyle='--', linewidth=1.4)
 ax1.legend(ncol=6, loc=('upper center'), prop={'size': 25} )
 #plt.suptitle("Angular reconstrucion of simulated events with AraSim", fontsize=22)
 #fig.tight_layout(rect=[0, 0.09, 1, 0.95])
-#plt.savefig("NuAnglesnew.png", dpi=100)
+#plt.savefig("test_plots/NuAnglesnew.png", dpi=100)
 
 
 #bincenters3 = 0.5*(bins3[1:]+bins3[:-1])
@@ -620,7 +620,7 @@ print(np.cos(np.pi))
 '''
 #fig.suptitle("RF Arrival Angles (Not Normalized)", fontsize=15)
 #fig.tight_layout(rect=[0, 0.09, 1, 0.95])
-fig.savefig("ArrivalAngleRFnew.png", dpi = 100, bbox_inches = 'tight')
+fig.savefig("test_plots/ArrivalAngleRFnew.png", dpi = 100, bbox_inches = 'tight')
 plt.clf()
 
 stop = timeit.default_timer()
