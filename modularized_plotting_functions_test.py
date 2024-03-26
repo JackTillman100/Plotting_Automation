@@ -2,6 +2,7 @@
 #This python script contains the functions used in the "Modularized_PlotMaker_Test.py" file
 
 #Importing the necessary python and ROOT libraries
+import matplotlib
 import matplotlib.pyplot as plt 
 from matplotlib.lines import Line2D
 import numpy as np
@@ -494,3 +495,196 @@ def antenna_data_txt_writer_temp(txtFile, data_dict, source_names, i, IceVolume)
         txtFile.write('{0}'.format(IceVolume * 4.0 * np.pi * (
                 np.sum(data_dict[source_names[i]]['weight'])/data_dict[source_names[i]]['Total_Events'])))
         txtFile.write('\n')
+
+#Function that generates physics plots that match the ones seen in GENETIS research papers:
+def research_paper_plotter(source_names, data_dict):
+        if len(source_names) == 2:
+                #Collecting the data we need for the first antenna:
+                evolved_theta_rec = data_dict[source_names[0]]['theta_rec_0']
+                evolved_nnu_theta = data_dict[source_names[0]]['nnu_theta']
+                evolved_weights = data_dict[source_names[0]]['weight']
+
+                #Collecting the data we need for the second antenna:
+                bicone_theta_rec = data_dict[source_names[1]]['theta_rec_0']
+                bicone_nnu_theta = data_dict[source_names[1]]['nnu_theta']
+                bicone_weights = data_dict[source_names[1]]['weight']
+
+                #Plotting theta_rec:
+                ang_forHist = np.cos(evolved_theta_rec)
+                ang_forHist2 = np.cos(bicone_theta_rec)
+
+                theta_recHist1 = -np.cos(evolved_theta_rec)
+                theta_recHist2 = -np.cos(bicone_theta_rec)
+
+                nuWeights = evolved_weights
+                nuWeights2 = bicone_weights
+
+                numBins=25
+
+                fig = plt.figure(figsize = (10, 10))
+
+                ax1 = fig.add_subplot(111)
+                ax2 = ax1.twiny()
+
+
+                ax1.hist(theta_recHist1,weights=nuWeights, alpha=1.0, bins=numBins,histtype='step', stacked=True,density=False, fill=False,label=source_names[0], linewidth = 2)
+                ax1.hist(theta_recHist2,weights=nuWeights2, alpha=1.0, bins=numBins,histtype='step', stacked=True,density=False, fill=False,label=source_names[1], linewidth = 2)
+                #second_x = np.linspace(0, np.pi, 360)
+                second_x = np.linspace(180, 0, 180) ## Flipped to be originating direction instead of propagating
+                second_y = [100]*180
+                ax2.hist(second_x, second_y, label = '_nolegend_', color = 'w', alpha = 0)
+                ax1.set_xlabel("$\cos(\\theta_{𝜈})$", fontsize=32, labelpad = 10)
+                ax1.set_ylabel("Number of neutrinos / bin", fontsize=32, labelpad = 5)
+                ax2.set_xlabel("$\\theta_{𝜈}$", fontsize=32, labelpad = 10)
+                #values,binz,patches=axes[0].hist(ang_forHist,weights=nuWeights, range=(-1, 0.5),alpha=1.0, bins=numBins,histtype='step', stacked=True,density=False, fill=False,label="New Bicone");
+                #values2,bins2,patches2=axes[0].hist(ang_forHist2,weights=nuWeights2, range=(-1, 0.5),alpha=1.0, bins=binz,histtype='step', stacked=True,density=False, fill=False,label="Old Bicone");
+
+                '''From stack overflow--trying to set scientific notation to use ^3 instead of ^4'''
+                class OOMFormatter(matplotlib.ticker.ScalarFormatter):
+                        def __init__(self, order=0, fformat="%1.1f", offset=False, mathText=True):
+                                self.oom = order
+                                self.fformat = fformat
+                                matplotlib.ticker.ScalarFormatter.__init__(self,useOffset=offset,useMathText=mathText)
+                        def _set_order_of_magnitude(self):
+                                self.orderOfMagnitude = self.oom
+                        def _set_format(self, vmin=None, vmax=None):
+                                self.format = self.fformat
+                                if self._useMathText:
+                                        self.format = r'$\mathdefault{%s}$' % self.format
+
+
+                #plt.yscale("log")
+                #ticks = ax.get_yticks()/1000
+                #fig.axes.Axes.set_yticklabels(ticks)
+                #plt.xticks(size = 28, ticks = np.arange(-1.0, 1.2, 0.4))
+                plt.yticks(size = 26)
+                plt.tick_params(axis = 'both', which = 'major', pad = 10)
+                plt.margins(0.1)
+                plt.ticklabel_format(axis="y", style="sci", scilimits=(0,4))
+                ax1.yaxis.set_major_formatter(OOMFormatter(3, "%1.1f"))
+                ax2.yaxis.set_major_formatter(OOMFormatter(3, "%1.1f"))
+                ax1.yaxis.offsetText.set_fontsize(16)
+                ax1.tick_params(axis = 'both', labelsize = 26)
+                ax2.tick_params(labelsize = 26)
+                ax1.get_yaxis().get_offset_text().set_position((-0.08, 0.8))
+                ax2.yaxis.offsetText.set_fontsize(26)
+                #ax2.cla()
+                ax1.set_ylim(1E0, 2.2*10**3)
+                ax1.set_xlim(-1.2, 1.2)
+                ax2.set_xlim( -0.2*90, 180 + 0.2*90)
+                my_ticks = [0, 45, 90, 135, 180]
+                ax2.set_xticks(my_ticks)
+                ax2.set_xticklabels(my_ticks[::-1])
+                ax1.grid(linestyle='--', linewidth=1.4)
+                #plt.title("Angular distribution of Detected Events", fontsize=26)
+                ax1.legend(ncol=6, loc=('upper center'), prop={'size': 25} )
+                #plt.suptitle("Angular reconstrucion of simulated events with AraSim", fontsize=22)
+                #fig.tight_layout(rect=[0, 0.09, 1, 0.95])
+                plt.savefig("test_plots/NuAnglesnew.png", dpi=100, bbox_inches = 'tight')
+                plt.clf()
+
+                #Plotting nnu_theta:
+
+                numBins=25#int(tree.GetEntries()/10)
+
+                ang_forHist = evolved_nnu_theta
+                ang_forHist2 = bicone_nnu_theta
+
+                nnuHist1 = np.cos(evolved_nnu_theta)
+                nnuHist2 = np.cos(bicone_nnu_theta)
+
+                nuWeights = evolved_weights
+                nuWeights2 = bicone_weights
+
+                fig = plt.figure(figsize = (10,10))
+
+                ax1 = fig.add_subplot(111)
+                ax2 = ax1.twiny()
+
+
+                ax1.hist(nnuHist1, weights=nuWeights, bins=numBins, density=False, alpha=1.0,histtype='step',label=source_names[0], linewidth = 2)
+                ax1.hist(nnuHist2, weights=nuWeights2, bins=numBins, density=False, alpha=1.0,histtype='step',label=source_names[1], linewidth = 2)
+                second_x = np.linspace(180, 0, 180) # Flipped to be propagating instead of originating
+                second_y = [100]*180
+                ax2.hist(second_x, second_y, label = '_nolegend_', color = 'w', alpha = 0)
+                ax1.set_xlabel("$\cos(\\theta_{RF})$", fontsize=32, labelpad = 10)
+                ax1.set_ylabel("Number of RF signals / bin", fontsize=32, labelpad = 5)
+                ax2.set_xlabel("$\\theta_{RF}$", fontsize = 32, labelpad = 10)
+                #bincenters = 0.5*(bins[1:]+bins[:-1])
+                #menStd     = np.sqrt(values)
+                #menStd2    = np.sqrt(values2)
+                width      = 0.1
+                #axes[0].bar(bincenters, values,ecolor='C0', edgecolor='C0', yerr=menStd,label="New Bicone", fill=False,width=width)
+                #axes[0].bar(bincenters,values2,ecolor='C1',width=width, yerr=menStd2, fill=False,edgecolor='C1',label="Ara Bicone")
+                #plt.show()
+                #bin_to_integrate = int(len(bins)-125/np.diff(bins)[0])
+
+                #area = sum(np.diff(bins[:bin_to_integrate+1])*values[:bin_to_integrate])
+                '''
+                axes[0].set_xlabel("$\\theta_{RF}$ [rads]", fontsize=12)
+                axes[0].set_ylabel("counts", fontsize=12)
+                #axes[0].set_yscale("log")
+                #axes[0].set_xlim(-1, 10)
+                axes[0].grid(linestyle='--', linewidth=0.8)
+                print(np.cos(90))
+                values3,binz3,patches3=axes[1].hist(np.cos((ang_forHist)), bins=numBins, density=False,histtype='step',alpha=1.0)
+                values4,bins4,patches4=axes[1].hist(np.cos((ang_forHist2)), bins=binz3, density=False,histtype='step',alpha=1.0)
+                '''
+
+                '''From stack overflow--trying to set scientific notation to use ^3 instead of ^4'''
+                class OOMFormatter(matplotlib.ticker.ScalarFormatter):
+                        def __init__(self, order=0, fformat="%1.1f", offset=False, mathText=True):
+                                self.oom = order
+                                self.fformat = fformat
+                                matplotlib.ticker.ScalarFormatter.__init__(self,useOffset=offset,useMathText=mathText)
+                        def _set_order_of_magnitude(self):
+                                self.orderOfMagnitude = self.oom
+                        def _set_format(self, vmin=None, vmax=None):
+                                self.format = self.fformat
+                                if self._useMathText:
+                                        self.format = r'$\mathdefault{%s}$' % self.format
+
+                plt.xticks(size = 26, ticks = np.arange(-1.0, 1.2, 0.4))
+                plt.yticks(size = 26)
+                plt.tick_params(axis = 'both', which = 'major', pad = 5)
+                plt.margins(0)
+                plt.ticklabel_format(axis="y", style="sci", scilimits=(0,4))
+                ax1.yaxis.set_major_formatter(OOMFormatter(2, "%1.1f"))
+                ax2.yaxis.set_major_formatter(OOMFormatter(2, "%1.1f"))
+                ax1.yaxis.offsetText.set_fontsize(16)
+                ax1.tick_params(axis = 'both', labelsize = 26)
+                ax2.tick_params(labelsize = 26)
+                ax1.get_yaxis().get_offset_text().set_position((-0.08, 0.8))
+                ax2.yaxis.offsetText.set_fontsize(32)
+                ax1.set_ylim(1E0, 2.2*10**2)
+                ax1.set_xlim(-1.2, 1.2)
+                ax2.set_xlim( -0.2*90, 180 + 0.2*90)
+                my_ticks = [0, 45, 90, 135, 180]
+                ax2.set_xticks(my_ticks)
+                ax2.set_xticklabels(my_ticks[::-1])
+                ax1.grid(linestyle='--', linewidth=1.4)
+                #plt.title("Angular distribution of Detected Events", fontsize=26)
+                ax1.legend(ncol=6, loc=('upper center'), prop={'size': 25} )
+                #plt.suptitle("Angular reconstrucion of simulated events with AraSim", fontsize=22)
+                #fig.tight_layout(rect=[0, 0.09, 1, 0.95])
+                #plt.savefig("test_plots/NuAnglesnew.png", dpi=100)
+
+
+                #bincenters3 = 0.5*(bins3[1:]+bins3[:-1])
+                '''
+                menStd3 = np.sqrt(values3)
+                menStd4 = np.sqrt(values4)
+                #axes[1].bar(bincenters3, values3, width=.03, ecolor='C0',fill=False,edgecolor='C0',yerr=menStd3)
+                #axes[1].bar(bincenters3,values4,width=.03,ecolor='C1', fill=False,edgecolor='C1',yerr=menStd4)
+
+                # axes[1].set_title("Histogram of $\cos(\\theta_{rec})$", fontsize=12)
+                axes[1].set_xlabel("$\cos(\\theta_{RF})$", fontsize=12)
+                #axes[1].set_yscale("log")
+                #axes[1].set_ylim(5E-2, 1E1)
+                axes[1].grid(linestyle='--', linewidth=0.8)
+                print(np.cos(np.pi))
+                '''
+                #fig.suptitle("RF Arrival Angles (Not Normalized)", fontsize=15)
+                #fig.tight_layout(rect=[0, 0.09, 1, 0.95])
+                fig.savefig("test_plots/ArrivalAngleRFnew.png", dpi = 100, bbox_inches = 'tight')
+                plt.clf()
