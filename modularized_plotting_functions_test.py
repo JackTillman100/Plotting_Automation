@@ -11,6 +11,8 @@ import warnings
 import ROOT
 from ROOT import gInterpreter, gSystem
 from ROOT import TChain
+from itertools import combinations
+
 #Defining a function to create the lists used in the loop based off of the parsed data:
 
 def parsed_data_list(g):
@@ -498,16 +500,19 @@ def antenna_data_txt_writer_temp(txtFile, data_dict, source_names, i, IceVolume)
 
 #Function that generates physics plots that match the ones seen in GENETIS research papers:
 def research_paper_plotter(source_names, data_dict):
-        if len(source_names) == 2:
+        indexes = list(range(len(source_names)))
+        nCombinations = 2
+        for combos in combinations(indexes, nCombinations):
+                index1, index2 = combos
                 #Collecting the data we need for the first antenna:
-                evolved_theta_rec = data_dict[source_names[0]]['theta_rec_0']
-                evolved_nnu_theta = data_dict[source_names[0]]['nnu_theta']
-                evolved_weights = data_dict[source_names[0]]['weight']
+                evolved_theta_rec = data_dict[source_names[index1]]['theta_rec_0']
+                evolved_nnu_theta = data_dict[source_names[index1]]['nnu_theta']
+                evolved_weights = data_dict[source_names[index1]]['weight']
 
                 #Collecting the data we need for the second antenna:
-                bicone_theta_rec = data_dict[source_names[1]]['theta_rec_0']
-                bicone_nnu_theta = data_dict[source_names[1]]['nnu_theta']
-                bicone_weights = data_dict[source_names[1]]['weight']
+                bicone_theta_rec = data_dict[source_names[index2]]['theta_rec_0']
+                bicone_nnu_theta = data_dict[source_names[index2]]['nnu_theta']
+                bicone_weights = data_dict[source_names[index2]]['weight']
 
                 #Plotting theta_rec:
                 ang_forHist = np.cos(evolved_theta_rec)
@@ -527,8 +532,8 @@ def research_paper_plotter(source_names, data_dict):
                 ax2 = ax1.twiny()
 
 
-                ax1.hist(theta_recHist1,weights=nuWeights, alpha=1.0, bins=numBins,histtype='step', stacked=True,density=False, fill=False,label=source_names[0], linewidth = 2)
-                ax1.hist(theta_recHist2,weights=nuWeights2, alpha=1.0, bins=numBins,histtype='step', stacked=True,density=False, fill=False,label=source_names[1], linewidth = 2)
+                ax1.hist(theta_recHist1,weights=nuWeights, alpha=1.0, bins=numBins,histtype='step', stacked=True,density=False, fill=False,label=source_names[index1], linewidth = 2)
+                ax1.hist(theta_recHist2,weights=nuWeights2, alpha=1.0, bins=numBins,histtype='step', stacked=True,density=False, fill=False,label=source_names[index2], linewidth = 2)
                 #second_x = np.linspace(0, np.pi, 360)
                 second_x = np.linspace(180, 0, 180) ## Flipped to be originating direction instead of propagating
                 second_y = [100]*180
@@ -580,7 +585,8 @@ def research_paper_plotter(source_names, data_dict):
                 ax1.legend(ncol=6, loc=('upper center'), prop={'size': 25} )
                 #plt.suptitle("Angular reconstrucion of simulated events with AraSim", fontsize=22)
                 #fig.tight_layout(rect=[0, 0.09, 1, 0.95])
-                plt.savefig("test_plots/NuAnglesnew.png", dpi=100, bbox_inches = 'tight')
+                savefig_string1 = "test_plots/NuAngles" + "_" + source_names[index1] + "_" + source_names[index2] + ".png"
+                plt.savefig(savefig_string1, dpi=100, bbox_inches = 'tight')
                 plt.clf()
 
                 #Plotting nnu_theta:
@@ -602,8 +608,8 @@ def research_paper_plotter(source_names, data_dict):
                 ax2 = ax1.twiny()
 
 
-                ax1.hist(nnuHist1, weights=nuWeights, bins=numBins, density=False, alpha=1.0,histtype='step',label=source_names[0], linewidth = 2)
-                ax1.hist(nnuHist2, weights=nuWeights2, bins=numBins, density=False, alpha=1.0,histtype='step',label=source_names[1], linewidth = 2)
+                ax1.hist(nnuHist1, weights=nuWeights, bins=numBins, density=False, alpha=1.0,histtype='step',label=source_names[index1], linewidth = 2)
+                ax1.hist(nnuHist2, weights=nuWeights2, bins=numBins, density=False, alpha=1.0,histtype='step',label=source_names[index2], linewidth = 2)
                 second_x = np.linspace(180, 0, 180) # Flipped to be propagating instead of originating
                 second_y = [100]*180
                 ax2.hist(second_x, second_y, label = '_nolegend_', color = 'w', alpha = 0)
@@ -686,5 +692,6 @@ def research_paper_plotter(source_names, data_dict):
                 '''
                 #fig.suptitle("RF Arrival Angles (Not Normalized)", fontsize=15)
                 #fig.tight_layout(rect=[0, 0.09, 1, 0.95])
-                fig.savefig("test_plots/ArrivalAngleRFnew.png", dpi = 100, bbox_inches = 'tight')
+                savefig_string2 = "test_plots/ArrivalAngleRF" + "_" + source_names[index1] + "_" + source_names[index2] + ".png"
+                fig.savefig(savefig_string2, dpi = 100, bbox_inches = 'tight')
                 plt.clf()
